@@ -4,6 +4,6 @@ namespace BookingSystem.Models
 {
     public class ApplicationUser : IdentityUser 
     {
-        public ICollection<ApplicationUserGymClass> AttendingUsers { get; set; } = new List<ApplicationUserGymClass>();
+        public ICollection<ApplicationUserGymClass> AttendedClasses { get; set; } = new List<ApplicationUserGymClass>();
     }
 }

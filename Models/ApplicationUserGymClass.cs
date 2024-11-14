@@ -3,6 +3,6 @@
     public class ApplicationUserGymClass
     {
         public int GymClassId { get; set; }
-        public int ApplicationUserId { get; set; }
+        public string ApplicationUserId { get; set; }
     }
 }

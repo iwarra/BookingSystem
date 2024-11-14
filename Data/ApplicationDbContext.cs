@@ -13,6 +13,7 @@ namespace BookingSystem.Data
         }
 
         public DbSet<GymClass> GymClasses { get; set; } = default!;
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

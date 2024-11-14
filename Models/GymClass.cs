@@ -9,6 +9,6 @@
         public DateTime EndTime { get { return StartTime + Duration; } }
         public String Description { get; set; }
 
-        public ICollection<ApplicationUserGymClass> AttendedClasses { get; set; }
+        public ICollection<ApplicationUserGymClass> AttendedClasses { get; set; } = new List<ApplicationUserGymClass>();
     }
 }

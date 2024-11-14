@@ -7,15 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookingSystem.Data;
 using BookingSystem.Models;
+using Microsoft.AspNetCore.Identity;
+using BookingSystem.Models.ViewModels;
 
 namespace BookingSystem.Controllers
 {
     public class GymClassesController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
 
-        public GymClassesController(ApplicationDbContext context)
+        public GymClassesController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
 
@@ -40,7 +44,18 @@ namespace BookingSystem.Controllers
                 return NotFound();
             }
 
-            return View(gymClass);
+            var viewModel = new DetailsViewModel
+            {
+                Id = gymClass.Id,
+                Name = gymClass.Name,
+                StartTime = gymClass.StartTime,
+                Duration = gymClass.Duration,
+                EndTime = gymClass.EndTime,
+                Description = gymClass.Description,
+            //Emails to be added here
+            };
+
+            return View(viewModel);
         }
 
         // GET: GymClasses/Create
@@ -152,6 +167,41 @@ namespace BookingSystem.Controllers
         private bool GymClassExists(int id)
         {
             return _context.GymClasses.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BookingToggle(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            //Put the wrong name in GymClass - should be AttendingMembers
+            var gymClass = await _context.GymClasses
+            .Include(g => g.AttendedClasses)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (gymClass == null) return NotFound();
+
+            var existingBooking = gymClass.AttendedClasses
+            .FirstOrDefault(ac => ac.ApplicationUserId == user.Id);
+
+            if (existingBooking != null)
+            {
+                gymClass.AttendedClasses.Remove(existingBooking);
+            }
+            else
+            {
+                gymClass.AttendedClasses.Add(new ApplicationUserGymClass
+                {
+                    GymClassId = (int)id,
+                    ApplicationUserId = user.Id
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

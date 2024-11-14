@@ -1,4 +1,7 @@
-﻿@model BookingSystem.Models.GymClass
+﻿@using BookingSystem.Models.ViewModels
+@* @model BookingSystem.Models.GymClass *@
+
+@model DetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +10,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>GymClass</h4>
+    <h4>Gym Class</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -36,6 +39,17 @@
         </dd>
     </dl>
 </div>
+<table class="table">
+    <tr>
+        <th>Attending users</th>
+    </tr>
+    @foreach (var email in Model.AttendingMemberEmails)
+    {
+        <tr>
+            <td>@email</td>
+        </tr>
+    }
+</table>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
